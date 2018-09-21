@@ -37,9 +37,9 @@ def getUrls(driver):
 
         driver.switch_to_window(window)
         urls.append(driver.current_url)#统计获取到的URL
-        print "[-] "+driver.current_url #打印下当前的URL
+        print "\t[-] "+driver.current_url #打印下当前的URL
 
-    print "[-] The number of pages parsed to URL is :"+str(len(all_windows))#打印页面获取了多少URL
+    print "[*] The number of pages parsed to URL is :"+str(len(all_windows))#打印页面获取了多少URL
     #复原
     #执行 其实这里可以和上面的循环一起处理
     for window in all_windows[:]:
@@ -107,8 +107,8 @@ def saveData(urls,filename):
             for url in urls:
                 f.write(url+'\n')
 
-    print "[-] The urls total num is:"+str(len(urls))
-    print "[-] The spider urls save as file:"+filename
+    print "[*] The urls total num is:"+str(len(urls))
+    print "[*] The spider urls save as file:"+filename
 
 
 #运行
@@ -118,9 +118,11 @@ def run():
     # urls=[]
     # driver = webdriver.Chrome()
     keyword,pages,filename=getargs()
-    print "[-] Keywords:"+keyword
-    print "[-] nums:"+str(pages)
-    print "[-] save file name:"+filename
+    print "[*] Keywords:"+keyword
+    print "[*] nums:"+str(pages)
+    print "[*] save file name:"+filename
+    print "\n\n"
+    print "--"*10
 
 
     urls=[]
@@ -130,7 +132,7 @@ def run():
         driver=doSearch(url,keyword,driver)
 
         for i in range(pages+1):
-            print "[-] Page data loading: "+str(i+1)
+            print "[*] Page data loading: "+str(i+1)
             url_lst,driver=getUrls(driver)
             urls.extend(url_lst)
             driver=toNextpage(driver)
