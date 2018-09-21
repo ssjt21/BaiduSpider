@@ -67,24 +67,75 @@ def toNextpage(driver):
         pages[-1].click()
     return  driver
 
+# 获取传递的参数:
+def getargs():
+    import sys
+    usage='''
+    Usage: BaiduSpider  keywords  [nums] [filename]
+            keywords:   your Search keywords 
+            nums:       default value is 6,seach max pages
+            filename:   result saved file name，default value is result.txt
+    
+    '''
+    if len(sys.argv)<2:
+        print usage
+        exit()
+    else:
+        try:
+            keywords= sys.argv[1]
+            if len(sys.argv)==2:
+                # keywords= sys.argv[1] if sys.argv[1] else ""
+                nums= 6
+                filename="result.txt"
+                return (keywords,nums,filename)
+            if len(sys.argv)==3:
+                nums= int(sys.argv[2])
+                filename = "result.txt"
+                return (keywords, nums, filename)
+            if len(sys.argv)==4:
+                nums = int(sys.argv[2])
+                filename=sys.argv[3]
+                return (keywords, nums, filename)
+        except:
+            print "[!] Parameter error !"
+            print usage
+            exit()
+
+def saveData(urls,filename):
+    if urls:
+        with open(filename,'w') as f:
+            for url in urls:
+                f.write(url+'\n')
+
+    print "[-] The urls total num is:"+str(len(urls))
+    print "[-] The spider urls save as file:"+filename
+
 
 #运行
 def run():
-    pages=11
+    # pages=11
+    #
+    # urls=[]
+    # driver = webdriver.Chrome()
+    keyword,pages,filename=getargs()
+    print "[-] Keywords:"+keyword
+    print "[-] nums:"+str(pages)
+    print "[-] save file name:"+filename
+
 
     urls=[]
-    # driver = webdriver.Chrome()
     try:
         driver = webdriver.PhantomJS()
         driver.implicitly_wait(6)
         driver=doSearch(url,keyword,driver)
 
         for i in range(pages+1):
-
+            print "[-] Page data loading: "+str(i+1)
             url_lst,driver=getUrls(driver)
             urls.extend(url_lst)
             driver=toNextpage(driver)
             time.sleep(2)
+        saveData(urls,filename)
     except Exception as e:
         print "[!] There seems to be a mistake! The error message is as follows: "
         print "--"*6+"Error Message Info"+"--"*6
@@ -93,7 +144,8 @@ def run():
     finally:
         #关闭浏览器
         driver.quit()
-run()
+
 if __name__ == '__main__':
+    run()
     pass
 
