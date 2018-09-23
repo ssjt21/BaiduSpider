@@ -8,6 +8,9 @@
 """
 
 from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+
+
 
 import time
 
@@ -103,12 +106,11 @@ def getargs():
 
 def saveData(urls,filename):
     if urls:
-        with open(filename,'w') as f:
+        with open(filename,'a+') as f:
             for url in urls:
                 f.write(url+'\n')
 
-    print "[*] The urls total num is:"+str(len(urls))
-    print "[*] The spider urls save as file:"+filename
+
 
 
 #运行
@@ -121,13 +123,24 @@ def run():
     print "[*] Keywords:"+keyword
     print "[*] nums:"+str(pages)
     print "[*] save file name:"+filename
-    print "\n\n"
-    print "--"*10
+    print "\n"
+    print "--"*30
 
 
     urls=[]
     try:
-        driver = webdriver.PhantomJS()
+
+        # options=webdriver.P
+        # options.add_argument('--ignore-certificate-errors')
+
+        dcap = dict(DesiredCapabilities.PHANTOMJS)
+        dcap[
+            "phantomjs.page.settings.userAgent"] = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0"
+        # 不加载图片
+        dcap["phantomjs.page.settings.loadImages"] = False
+        driver = webdriver.PhantomJS(desired_capabilities=dcap)
+        driver.set_page_load_timeout(20)
+
         driver.implicitly_wait(6)
         driver=doSearch(url,keyword,driver)
 
@@ -136,13 +149,15 @@ def run():
             url_lst,driver=getUrls(driver)
             urls.extend(url_lst)
             driver=toNextpage(driver)
-            time.sleep(2)
-        saveData(urls,filename)
+            time.sleep(5)
+            saveData(url_lst,filename)
+        print "[*] The urls total num is:" + str(len(urls))
+        print "[*] The spider urls save as file:" + filename
     except Exception as e:
         print "[!] There seems to be a mistake! The error message is as follows: "
-        print "--"*6+"Error Message Info"+"--"*6
+        print "--"*10+"Error Message Info"+"--"*10
         print e
-        print "--" * 6 + "Error Message  Info END" + "--" * 6
+        print "--" * 10 + "Error Message  Info END" + "--" * 10
     finally:
         #关闭浏览器
         driver.quit()
