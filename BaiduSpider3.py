@@ -4,7 +4,7 @@
 @author:随时静听
 @file: baiduSpider2.py
 @time: 2018/09/21
-@email:wang_di@topsec.com.cn
+
 """
 
 from selenium import webdriver
